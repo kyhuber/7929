@@ -1,0 +1,99 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Palette drawn from the house itself (PRD §8):
+ *  SW 6119 Antique White  -> background
+ *  SW 7036 Accessible Beige -> surface
+ *  deep warm brown        -> text
+ *  sage (kitchen cabinetry) -> accent / primary
+ *  douglas fir warm amber -> overdue accent (deliberately not red)
+ */
+:root {
+  --radius: 0.75rem;
+
+  --background: #eae0cf;
+  --foreground: #2e2721;
+
+  --card: #f2ead9;
+  --card-foreground: #2e2721;
+
+  --popover: #f2ead9;
+  --popover-foreground: #2e2721;
+
+  --primary: #8a9a7b;
+  --primary-foreground: #fdfbf6;
+
+  --secondary: #d3c7b5;
+  --secondary-foreground: #2e2721;
+
+  --muted: #ddd1bd;
+  --muted-foreground: #6f6353;
+
+  --accent: #d3c7b5;
+  --accent-foreground: #2e2721;
+
+  --destructive: #9c4a2f;
+  --destructive-foreground: #fdfbf6;
+
+  --border: #c9bca4;
+  --input: #c9bca4;
+  --ring: #8a9a7b;
+
+  /* "waiting for you", not "you have failed" */
+  --overdue: #b5793a;
+  --overdue-foreground: #fdfbf6;
+  --overdue-soft: #e7d3b4;
+
+  --sage-soft: #dbe0d0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-overdue: var(--overdue);
+  --color-overdue-foreground: var(--overdue-foreground);
+  --color-overdue-soft: var(--overdue-soft);
+  --color-sage-soft: var(--sage-soft);
+
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    /* keep iOS from inflating text in landscape */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.6;
+    /* standalone PWA: respect the notch and home indicator */
+    padding-top: env(safe-area-inset-top);
+  }
+}
