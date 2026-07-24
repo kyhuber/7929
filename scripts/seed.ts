@@ -96,6 +96,7 @@ const p = (
   kind: "project",
   name,
   category: "living",
+  steps: [],
   priority,
   est_minutes: est,
   ...extra,
