@@ -1,6 +1,8 @@
 /**
- * Dev-only helper: prints a one-time localhost sign-in link for the owner,
- * bypassing the email round-trip. Uses the service-role key from .env.local.
+ * Dev-only helper: prints a one-time localhost sign-in link and a sign-in
+ * code for the owner, bypassing the email round-trip (and its rate limit).
+ * The code works on any device via "I already have a code" on the login
+ * screen. Uses the service-role key from .env.local.
  *
  *   npx tsx scripts/dev-signin.ts
  */
@@ -35,7 +37,10 @@ async function main() {
     process.exit(1);
   }
   console.log(
-    `http://localhost:3000/auth/confirm?token_hash=${data.properties.hashed_token}&type=magiclink`
+    `localhost link:  http://localhost:3000/auth/confirm?token_hash=${data.properties.hashed_token}&type=magiclink`
+  );
+  console.log(
+    `sign-in code:    ${data.properties.email_otp}  (type it into any deployed login via "I already have a code")`
   );
 }
 

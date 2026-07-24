@@ -101,6 +101,18 @@ function LoginForm() {
           >
             {busy ? "Sending…" : "Send sign-in email"}
           </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-11 w-full text-muted-foreground"
+            disabled={!email}
+            onClick={() => {
+              setStep("code");
+              setError(null);
+            }}
+          >
+            I already have a code
+          </Button>
         </form>
       ) : (
         <form onSubmit={verifyCode} className="mt-8 space-y-4">
