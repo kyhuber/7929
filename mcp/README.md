@@ -28,7 +28,18 @@ available in conversation with no client-side change.
    `SUPABASE_SERVICE_ROLE_KEY` from `.env.local` in the repo root — the same
    file `npm run seed` uses. See the security note below.
 
-2. **Check it boots**, before wiring it into any client:
+2. **See it work first**, with no credentials and no Supabase project:
+
+   ```sh
+   npm run mcp:demo
+   ```
+
+   Starts a stub of the database API, spawns the real server, and walks every
+   tool — reads, writes, guardrails, and a final `list_today` showing the
+   changes having landed. This is the fastest way to understand what the tools
+   return before any of it is pointed at real data.
+
+3. **Check it boots** against your own setup:
 
    ```sh
    npm run mcp:check
@@ -39,7 +50,7 @@ available in conversation with no client-side change.
    tool *listing* and the PRD resource work without a database, so a failure
    here is a wiring problem, not a config one.
 
-3. **Register it.** In Claude Code, from the repo root:
+4. **Register it.** In Claude Code, from the repo root:
 
    ```sh
    claude mcp add 7929-home -- npx tsx mcp/server.ts
@@ -138,6 +149,7 @@ implementation of the app:
 | `analysis.ts` | Cadence-vs-reality interval statistics (pure) |
 | `format.ts` | Rendering tasks as text for a model to read |
 | `smoke.ts` | The `npm run mcp:check` harness |
+| `demo/` | `npm run mcp:demo` — stub API plus a walkthrough of every tool |
 
 ## Known limits
 

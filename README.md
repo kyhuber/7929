@@ -57,6 +57,7 @@ iPhone: open the Vercel URL in Safari → Share → Add to Home Screen.
 | `npm run seed` | one-time seed from PRD §9 |
 | `npm run mcp` | MCP server over stdio ([mcp/README.md](mcp/README.md)) |
 | `npm run mcp:check` | verify the MCP server boots and lists its tools |
+| `npm run mcp:demo` | walk every MCP tool against a stub database |
 | `node scripts/icons.mjs` | regenerate PWA icons |
 
 ## MCP server

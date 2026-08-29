@@ -10,7 +10,8 @@
     "test": "vitest run",
     "seed": "tsx scripts/seed.ts",
     "mcp": "tsx mcp/server.ts",
-    "mcp:check": "tsx mcp/smoke.ts"
+    "mcp:check": "tsx mcp/smoke.ts",
+    "mcp:demo": "tsx mcp/demo/run.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
