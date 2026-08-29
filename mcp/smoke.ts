@@ -9,13 +9,18 @@
  * Use it after changing a tool definition, rather than restarting Claude
  * Desktop to find out whether the server still boots.
  */
+import { join } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { projectRoot } from "./paths";
 
 async function main() {
+  // Absolute script path, but the *server's* cwd is left as-is on purpose: the
+  // server has to find .env.local and the PRD by walking up to the project
+  // root, not by trusting cwd. Running this from a subdirectory proves it does.
   const transport = new StdioClientTransport({
     command: "npx",
-    args: ["tsx", "mcp/server.ts"],
+    args: ["tsx", join(projectRoot(), "mcp", "server.ts")],
     cwd: process.cwd(),
   });
 

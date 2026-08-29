@@ -9,14 +9,16 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
+import { join } from "node:path";
 import type { Db } from "../src/lib/mutations";
+import { projectRoot } from "./paths";
 
 let cached: Db | null = null;
 
 export function getDb(): Db {
   if (cached) return cached;
 
-  config({ path: ".env.local" });
+  config({ path: join(projectRoot(), ".env.local") });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 

@@ -59,7 +59,10 @@ available in conversation with no client-side change.
    }
    ```
 
-   `cwd` matters: it's how the server finds `.env.local` and the PRD.
+   The server walks up from its working directory to find the project root
+   (marked by `7929-prd.md`), so any directory inside the repo works. Set `cwd`
+   anyway in a client config — a client that spawns it from somewhere else
+   entirely has nothing to walk up from.
 
 ## Tools
 
@@ -130,6 +133,7 @@ implementation of the app:
 |---|---|
 | `server.ts` | Tool and resource registration, stdio transport |
 | `db.ts` | Service-role Supabase client |
+| `paths.ts` | Finding the project root from any working directory |
 | `lookup.ts` | Resolving a task from a name the model typed |
 | `analysis.ts` | Cadence-vs-reality interval statistics (pure) |
 | `format.ts` | Rendering tasks as text for a model to read |

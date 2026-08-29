@@ -15,8 +15,8 @@
  *    than on a timestamp it has to do arithmetic against.
  *  - Failed lookups return the candidate list rather than guessing.
  */
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -26,6 +26,7 @@ import { CATEGORIES, type Task } from "../src/lib/types";
 import * as db from "../src/lib/mutations";
 import { analyzeIntervals } from "./analysis";
 import { getDb } from "./db";
+import { projectRoot } from "./paths";
 import {
   formatHistory,
   formatProjects,
@@ -38,23 +39,6 @@ import { resolveTask } from "./lookup";
 
 const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
 const failure = (s: string) => ({ ...text(s), isError: true });
-
-/** The PRD is the project root marker, so the server works from any cwd
- *  inside the project rather than only from the root. */
-function projectRoot(): string {
-  let dir = resolve(process.cwd());
-  for (;;) {
-    if (existsSync(join(dir, "7929-prd.md"))) return dir;
-    const parent = dirname(dir);
-    if (parent === dir) {
-      throw new Error(
-        "Couldn't locate the project root (no 7929-prd.md found above the " +
-          "working directory). Launch the server with cwd set to the repo."
-      );
-    }
-    dir = parent;
-  }
-}
 
 /** Load every task once per call. The table is a few dozen rows — paging or
  *  server-side filtering would be premature. */
