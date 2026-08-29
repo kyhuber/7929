@@ -9,9 +9,14 @@ Stack: Next.js 15 (App Router) · TypeScript · Tailwind 4 · shadcn/ui · Supab
 
 ## Setup
 
-1. **Env keys** — copy `.env.local.example` to `.env.local` and fill in the
-   URL, anon key, and service-role key from your Supabase project
-   (Project Settings → API).
+1. **Env keys** — create `.env.local` in the repo root with the values from
+   your Supabase project (Project Settings → API):
+
+   ```sh
+   NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+   SUPABASE_SERVICE_ROLE_KEY=<service role key>   # seeding and the MCP server only
+   ```
 
 2. **Schema** — paste `supabase/migrations/0001_init.sql` into the Supabase
    SQL editor and run it.
@@ -50,4 +55,14 @@ iPhone: open the Vercel URL in Safari → Share → Add to Home Screen.
 | `npm run build` | production build |
 | `npm test` | dueness logic unit tests |
 | `npm run seed` | one-time seed from PRD §9 |
+| `npm run mcp` | MCP server over stdio ([mcp/README.md](mcp/README.md)) |
+| `npm run mcp:check` | verify the MCP server boots and lists its tools |
 | `node scripts/icons.mjs` | regenerate PWA icons |
+
+## MCP server
+
+`mcp/` exposes the app as tools an AI assistant can call — "what's overdue that
+I can do in 20 minutes?", "add a project to caulk the back door", "is the
+bathroom-clean cadence set right?". It shares `src/lib/dueness.ts` and
+`src/lib/mutations.ts` with the app so the two can't disagree. Setup and the
+tool list are in [mcp/README.md](mcp/README.md).
