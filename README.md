@@ -18,8 +18,8 @@ Stack: Next.js 15 (App Router) · TypeScript · Tailwind 4 · shadcn/ui · Supab
    SUPABASE_SERVICE_ROLE_KEY=<service role key>   # seeding and the MCP server only
    ```
 
-2. **Schema** — paste `supabase/migrations/0001_init.sql` into the Supabase
-   SQL editor and run it.
+2. **Schema** — paste each file in `supabase/migrations/` into the Supabase
+   SQL editor, in filename order, and run it.
 
 3. **Auth** — in Supabase → Authentication → URL Configuration, set the Site
    URL to your deployed origin (and add `http://localhost:3000` to redirect
@@ -55,9 +55,50 @@ iPhone: open the Vercel URL in Safari → Share → Add to Home Screen.
 | `npm run build` | production build |
 | `npm test` | dueness logic unit tests |
 | `npm run seed` | one-time seed from PRD §9 |
+| `npm run keepalive` | ping the database by hand (see below) |
 | `npm run mcp` | MCP server over stdio ([mcp/README.md](mcp/README.md)) |
 | `npm run mcp:check` | verify the MCP server boots and lists its tools |
 | `node scripts/icons.mjs` | regenerate PWA icons |
+
+## Keeping the project awake
+
+Supabase pauses a free project after **7 days without database activity**, which
+takes the app offline until someone clicks Restore in the dashboard. Two
+schedulers prevent that, both calling `ping()` from
+`supabase/migrations/0002_keepalive.sql` — a single-row update that reads no app
+data and needs nothing beyond the anon key:
+
+| Scheduler | When | Config |
+|---|---|---|
+| GitHub Actions | 09:37 UTC daily | [`.github/workflows/keepalive.yml`](.github/workflows/keepalive.yml) |
+| Vercel cron | ~14:00 UTC daily | [`vercel.json`](vercel.json) → `/api/keepalive` |
+
+Two of them, because each fails in a way the other survives: **GitHub disables
+scheduled workflows after 60 days of repository inactivity** — exactly the
+dormant-repo case this is meant for (it emails you, and one click re-enables) —
+while a Vercel cron stops with the deployment. Pinging daily leaves six days of
+margin even if one of the two is quietly dead.
+
+Setup, once:
+
+1. Paste the contents of `supabase/migrations/0002_keepalive.sql` into the
+   Supabase SQL editor and run it.
+2. Add repository secrets `NEXT_PUBLIC_SUPABASE_URL` and
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Settings → Secrets and variables → Actions).
+3. Redeploy so Vercel picks up the cron. Hobby-plan crons run once a day and
+   fire within the hour of the stated time — fine against a 7-day window.
+   Setting a `CRON_SECRET` env var in Vercel is optional; when it's set, Vercel
+   sends it and `/api/keepalive` rejects anything else.
+4. Check it works: Actions → Supabase keepalive → Run workflow, and
+   `npm run keepalive` locally. Both print the new timestamp.
+
+After that, silence means it's working — GitHub emails you when a scheduled run
+fails. To look directly, `keepalive.last_ping_at` holds the time of the last
+successful ping (readable from the SQL editor; the table itself is not reachable
+over the API).
+
+If the project is *already* paused, restore it from the dashboard first — a ping
+can't wake a project that's down.
 
 ## MCP server
 

@@ -33,8 +33,11 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/auth");
+  // The keepalive cron carries no session — it authenticates to Supabase with
+  // the anon key, so bouncing it to /login would defeat the point.
+  const isPublicRoute = isAuthRoute || pathname === "/api/keepalive";
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
