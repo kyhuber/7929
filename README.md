@@ -81,7 +81,8 @@ margin even if one of the two is quietly dead.
 
 Setup, once:
 
-1. Run `supabase/migrations/0002_keepalive.sql` in the SQL editor.
+1. Paste the contents of `supabase/migrations/0002_keepalive.sql` into the
+   Supabase SQL editor and run it.
 2. Add repository secrets `NEXT_PUBLIC_SUPABASE_URL` and
    `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Settings → Secrets and variables → Actions).
 3. Redeploy so Vercel picks up the cron. Hobby-plan crons run once a day and
