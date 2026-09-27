@@ -3,8 +3,9 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Lands the magic link. Supports both Supabase email formats:
+ * Lands the email magic link. Supports both Supabase email formats:
  * token_hash (recommended template) and PKCE `code` exchange.
+ * Google sign-in lands on /auth/callback instead.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

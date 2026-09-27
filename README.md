@@ -15,15 +15,32 @@ Stack: Next.js 15 (App Router) · TypeScript · Tailwind 4 · shadcn/ui · Supab
    ```sh
    NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+   NEXT_PUBLIC_OWNER_EMAIL=<your Google account email>  # see Auth below
    SUPABASE_SERVICE_ROLE_KEY=<service role key>   # seeding and the MCP server only
    ```
 
 2. **Schema** — paste each file in `supabase/migrations/` into the Supabase
    SQL editor, in filename order, and run it.
 
-3. **Auth** — in Supabase → Authentication → URL Configuration, set the Site
-   URL to your deployed origin (and add `http://localhost:3000` to redirect
-   URLs for local dev). Email magic link is the only sign-in method.
+3. **Auth** — sign-in is Google first, with an email magic link / code as
+   the fallback. Three places to configure:
+
+   - **Google Cloud Console** → APIs & Services → Credentials → OAuth client
+     (Web application). Add your Supabase callback,
+     `https://<project>.supabase.co/auth/v1/callback`, as an authorized
+     redirect URI, and copy the client ID and secret.
+   - **Supabase** → Authentication → Providers → Google: enable it and paste
+     the client ID and secret. Then Authentication → URL Configuration: set
+     the Site URL to your deployed origin and add `https://<deployed>/**`
+     and `http://localhost:3000/**` to Redirect URLs (the app sends users
+     back to `/auth/callback` after Google and `/auth/confirm` from email).
+   - **Lock it to you.** Anyone with a Google account can now start a
+     sign-in, and the database policies trust any signed-in session. Turn
+     off *Allow new users to sign up* under Authentication → Sign In /
+     Providers once your own account exists, and set
+     `NEXT_PUBLIC_OWNER_EMAIL` (or a server-only `OWNER_EMAIL`) so the app
+     also refuses any other account at the door. Use the same address for
+     Google and email sign-in — Supabase then treats both as one user.
 
 4. **Seed** (once):
 
@@ -43,7 +60,7 @@ Stack: Next.js 15 (App Router) · TypeScript · Tailwind 4 · shadcn/ui · Supab
 
 ## Deploy
 
-Push to GitHub, import into Vercel, add the two `NEXT_PUBLIC_*` env vars
+Push to GitHub, import into Vercel, add the three `NEXT_PUBLIC_*` env vars
 (the service-role key is only needed locally for seeding). Then on the
 iPhone: open the Vercel URL in Safari → Share → Add to Home Screen.
 

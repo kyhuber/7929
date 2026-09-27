@@ -1,6 +1,18 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const OWNER_EMAIL = (
+  process.env.OWNER_EMAIL ??
+  process.env.NEXT_PUBLIC_OWNER_EMAIL ??
+  ""
+)
+  .trim()
+  .toLowerCase();
+
+function isOwner(email: string | undefined) {
+  return !!email && email.trim().toLowerCase() === OWNER_EMAIL;
+}
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -41,6 +53,25 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // Google sign-in means anyone with a Google account can get a session,
+  // and RLS grants every authenticated session full access. When the
+  // owner's address is configured, refuse everyone else at the door.
+  // (Disabling "Allow new users to sign up" in Supabase is the real
+  // lock; this is the belt to that suspenders.)
+  if (user && OWNER_EMAIL && !isOwner(user.email)) {
+    await supabase.auth.signOut();
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "?error=owner";
+    const redirect = NextResponse.redirect(url);
+    // signOut cleared the session cookies on supabaseResponse; carry
+    // those deletions over so the browser actually forgets the session.
+    supabaseResponse.cookies
+      .getAll()
+      .forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
   }
 
   if (user && pathname.startsWith("/login")) {
